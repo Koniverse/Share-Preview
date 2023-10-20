@@ -1,0 +1,43 @@
+name: Update Static Data
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch name'
+        required: true
+        type: string
+        default: main
+  schedule:
+    - cron: '0 0 * * *'
+
+
+jobs:
+  master:
+    runs-on: ubuntu-22.04
+    name: Update Share Preview
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch }}
+          fetch-depth: 0
+          token: ${{ secrets.GH_AUTOMATION_TOKEN }}
+      - name: Update data
+        env:
+          STRAPI_TOKEN: ${{ secrets.STRAPI_TOKEN }}
+        run: |
+          yarn install --immutable | grep -v 'YN0013'
+          yarn update-data ${{ github.event.inputs.folder }}
+      - name: Deploy to Cloudflare Pages
+        id: cloudflare_deployment
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: 'sw-share'
+          gitHubToken: ${{ secrets.GH_AUTOMATION_TOKEN }}
+          branch: ${{ github.event.inputs.branch }}
+          directory: './build'
+          wranglerVersion: '3'
