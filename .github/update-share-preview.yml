@@ -24,12 +24,12 @@ jobs:
           ref: ${{ github.event.inputs.branch }}
           fetch-depth: 0
           token: ${{ secrets.GH_AUTOMATION_TOKEN }}
-      - name: Update data
+      - name: Update preview pages
         env:
           STRAPI_TOKEN: ${{ secrets.STRAPI_TOKEN }}
         run: |
           yarn install --immutable | grep -v 'YN0013'
-          yarn update-data ${{ github.event.inputs.folder }}
+          yarn build
       - name: Deploy to Cloudflare Pages
         id: cloudflare_deployment
         uses: cloudflare/pages-action@v1
