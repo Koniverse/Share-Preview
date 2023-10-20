@@ -1,4 +1,4 @@
-name: Update Static Data
+name: Update Share Preview Page
 on:
   push:
     branches:
