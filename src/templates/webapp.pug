@@ -45,18 +45,23 @@ html(lang="en")
 
       inSubWallet = detectMob() && window.SubWallet;
       isTelegramLink = '#{url}'.startsWith('https://t.me');
-
-      if (inSubWallet && isTelegramLink) {
-        // replace img in loading-placeholder > img
+      const fallbackImage = !{JSON.stringify(fallback_image)}
+      if (inSubWallet && isTelegramLink && fallbackImage) {
         var img = document.getElementById('loading-img');
-        img.src = '#{preview_image.url}';
-        img.style.position = 'absolute';
-        img.style.width = '100%';
-        img.style.top = '30%';
-        img.style.left = '0';
+         if (img) {
+           img.parentNode.removeChild(img);
+            var container = document.getElementById('loading-placeholder');
+            container.style.backgroundImage = "url(" + fallbackImage.url + ")";
+            container.style.backgroundSize = 'cover';
+            container.style.backgroundPosition = 'center';
+         }
+
       }
       else {
         window.addEventListener('load', function() {
-          window.location.replace('#{url}');
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const startApp = urlParams.get('startApp');
+          window.location.replace('#{url}' + (startApp ? '?startApp=' + startApp : ''));
         })
       }
