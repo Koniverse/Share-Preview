@@ -32,9 +32,31 @@ html(lang="en")
 
   body(style="background-color: rgb(12, 12, 12);")
     div#root
-    div#loading-placeholder(style="background-color: rgb(12, 12, 12); position:fixed; top: 0; left: 0; right: 0; bottom: 0")
-      img(src="https://web.subwallet.app/images/loading.svg", style="position: absolute; top: calc(50% - 50px); left: calc(50% - 50px)", alt="Loading")
+    a(href=url)
+      div#loading-placeholder(style="background-color: rgb(12, 12, 12); position:fixed; top: 0; left: 0; right: 0; bottom: 0")
+        img#loading-img(src="https://web.subwallet.app/images/loading.svg", style="position: absolute; top: calc(50% - 50px); left: calc(50% - 50px)", alt="Loading")
     script.
-      window.addEventListener('load', function() {
-        window.location.replace('#{url}');
-      })
+      function detectMob() {
+        const toMatch = [ /Android/i, /webOS/i, /iPhone/i, /iPad/i, /iPod/i, /BlackBerry/i, /Windows Phone/i ];
+          return toMatch.some((toMatchItem) => {
+            return navigator.userAgent.match(toMatchItem);
+          });
+        }
+
+      inSubWallet = detectMob() && window.SubWallet;
+      isTelegramLink = '#{url}'.startsWith('https://t.me');
+
+      if (inSubWallet && isTelegramLink) {
+        // replace img in loading-placeholder > img
+        var img = document.getElementById('loading-img');
+        img.src = '#{preview_image.url}';
+        img.style.position = 'absolute';
+        img.style.width = '100%';
+        img.style.top = '30%';
+        img.style.left = '0';
+      }
+      else {
+        window.addEventListener('load', function() {
+          window.location.replace('#{url}');
+        })
+      }
