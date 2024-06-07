@@ -32,7 +32,7 @@ html(lang="en")
 
   body(style="background-color: rgb(12, 12, 12);")
     div#root
-    a(href=url)
+    a#redirect-link(href=url)
       div#loading-placeholder(style="background-color: rgb(12, 12, 12); position:fixed; top: 0; left: 0; right: 0; bottom: 0")
         img#loading-img(src="https://web.subwallet.app/images/loading.svg", style="position: absolute; top: calc(50% - 50px); left: calc(50% - 50px)", alt="Loading")
     script.
@@ -43,9 +43,13 @@ html(lang="en")
           });
         }
 
+      var queryString = window.location.search;
+      var finalUrl = '#{url}' + queryString;
       var inSubWallet = detectMob() && window.SubWallet;
       var isTelegramLink = '#{url}'.startsWith('https://t.me');
       var fallback_image = !{JSON.stringify(fallback_image)};
+
+      document.getElementById('redirect-link').href = finalUrl;
 
       if (inSubWallet && isTelegramLink && fallback_image) {
         // replace img in loading-placeholder > img
@@ -62,9 +66,6 @@ html(lang="en")
       }
       else {
         window.addEventListener('load', function() {
-        const queryString = window.location.search;
-        const urlParams = new URLSearchParams(queryString);
-        const startApp = urlParams.get('startApp');
-          window.location.replace('#{url}' + (startApp ? '?startApp=' + startApp : ''));
+          window.location.replace(finalUrl);
         })
       }
