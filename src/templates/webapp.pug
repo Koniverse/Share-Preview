@@ -43,19 +43,22 @@ html(lang="en")
           });
         }
 
-      inSubWallet = detectMob() && window.SubWallet;
-      isTelegramLink = '#{url}'.startsWith('https://t.me');
-      const fallbackImage = !{JSON.stringify(fallback_image)}
-      if (inSubWallet && isTelegramLink && fallbackImage) {
-        var img = document.getElementById('loading-img');
-         if (img) {
-           img.parentNode.removeChild(img);
-            var container = document.getElementById('loading-placeholder');
-            container.style.backgroundImage = "url(" + fallbackImage.url + ")";
-            container.style.backgroundSize = 'cover';
-            container.style.backgroundPosition = 'center';
-         }
+      var inSubWallet = detectMob() && window.SubWallet;
+      var isTelegramLink = '#{url}'.startsWith('https://t.me');
+      var fallback_image = !{JSON.stringify(fallback_image)};
 
+      if (inSubWallet && isTelegramLink && fallback_image) {
+        // replace img in loading-placeholder > img
+        var img = document.getElementById('loading-img');
+        if (img) {
+          var placeholder = img.parentNode;
+          placeholder.removeChild(img);
+
+
+          placeholder.style.backgroundImage = 'url(' + fallback_image.url + ')';
+          placeholder.style.backgroundPosition = 'center';
+          placeholder.style.backgroundSize = 'cover';
+        }
       }
       else {
         window.addEventListener('load', function() {
